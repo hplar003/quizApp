@@ -16,6 +16,7 @@
   <div class="results">
     <p>Your result ...</p>
     <h1>{{ numberOfCorrectAnswer }} / {{ quizQuestionLength }}</h1>
+    <RouterLink to="/">Back to home</RouterLink>
   </div>
 </template>
 
