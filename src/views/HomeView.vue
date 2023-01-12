@@ -2,6 +2,7 @@
   import data from "../data/data.json";
   import { ref, watch } from "vue";
   import Card from "../components/Card.vue";
+  import gsap from "gsap";
 
   const quizes = ref([]);
   quizes.value = data;
@@ -12,6 +13,19 @@
       quiz.name.toLowerCase().includes(search.value.toLowerCase())
     );
   });
+  const beforeEnter = (el) => {
+    el.style.opacity = 0;
+    el.style.transform = "translateY(-100px)";
+  };
+  const enter = (el) => {
+    gsap.to(el, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      delay: el.dataset.index * 0.8,
+    });
+  };
+  const afterEnter = (el) => {};
 </script>
 
 <template>
@@ -22,17 +36,26 @@
         <input v-model.trim="search" type="text" placeholder="Search..." />
       </header>
       <div class="options-container">
-        <Card v-for="quiz in quizes" :key="quiz.id" :quiz="quiz" />
+        <transition-group
+          name="card"
+          appear
+          @before-enter="beforeEnter"
+          @after-enter="afterEnter"
+          @enter="enter"
+        >
+          <Card
+            v-for="(quiz, index) in quizes"
+            :key="quiz.id"
+            :quiz="quiz"
+            :data-index="index"
+          />
+        </transition-group>
       </div>
     </div>
   </main>
 </template>
 
 <style scoped>
-  .container {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
   header {
     margin-bottom: 10px;
     margin-top: 30px;
@@ -56,4 +79,15 @@
   }
 
   /* Card */
+  .card-enter-from {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  .card-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .card-enter-active {
+    transition: all 0.4s ease-in-out;
+  }
 </style>
